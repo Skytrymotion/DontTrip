@@ -19,7 +19,6 @@ namespace DontTrip
         float Chance;
         bool DoesDamage;
         float DamageAmount;
-        bool InitComplete = false;
 
         const uint modId = 817816524;
 
@@ -34,6 +33,8 @@ namespace DontTrip
         {
             MyceliumNetwork.RegisterNetworkObject(this, modId);
 
+            LocalInit();
+
             if (!player.refs.view.IsMine)
             {
                 return;
@@ -43,10 +44,6 @@ namespace DontTrip
                 MyceliumNetwork.RPC(modId, nameof(Init), ReliableType.Reliable, DontTrip.Duration.Value.ToString(), DontTrip.ChanceToTrip.Value.ToString(), DontTrip.DoesDamage.Value.ToString(), DontTrip.DamageAmount.Value.ToString());
             }
 
-            if (!InitComplete)
-            {
-                LocalInit();
-            }
         }
 
         [CustomRPC]
@@ -65,7 +62,6 @@ namespace DontTrip
                 DamageAmount = 0f;
             }
 
-            InitComplete = true;
         }
 
         void LocalInit()
@@ -83,7 +79,6 @@ namespace DontTrip
                 DamageAmount = 0f;
             }
 
-            InitComplete = true;
         }
         
 
