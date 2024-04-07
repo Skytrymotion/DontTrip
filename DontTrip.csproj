@@ -12,7 +12,7 @@
     
     <AssemblyName>DontTrip</AssemblyName>
     <Description>Makes you Randomly Trip if you Sprint</Description>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
@@ -32,6 +32,9 @@
   <ItemGroup>
     <Reference Include="Assembly-CSharp" Publicize="true">
       <HintPath>lib\Assembly-CSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="MyceliumNetworkingForCW">
+      <HintPath>lib\MyceliumNetworkingForCW.dll</HintPath>
     </Reference>
     <Reference Include="PhotonUnityNetworking">
       <HintPath>lib\PhotonUnityNetworking.dll</HintPath>

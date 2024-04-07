@@ -1,8 +1,9 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using HarmonyLib;
+using Photon.Pun;
 using UnityEngine;
-using static UnityEngine.ParticleSystem.PlaybackState;
+using MyceliumNetworking;
 
 namespace DontTrip
 {
@@ -13,13 +14,78 @@ namespace DontTrip
         float maxTimerTime = 5f;
         float TimerTime = 0f;
         Vector3 TripForce;
-        
+
+        float Duration;
+        float Chance;
+        bool DoesDamage;
+        float DamageAmount;
+        bool InitComplete = false;
+
+        const uint modId = 817816524;
 
 
         void Awake()
         {
             TripForce = Vector3.forward;
+            
         }
+
+        void Start()
+        {
+            MyceliumNetwork.RegisterNetworkObject(this, modId);
+
+            if (!player.refs.view.IsMine)
+            {
+                return;
+            }
+            if (PhotonNetwork.IsMasterClient)
+            {
+                MyceliumNetwork.RPC(modId, nameof(Init), ReliableType.Reliable, DontTrip.Duration.Value.ToString(), DontTrip.ChanceToTrip.Value.ToString(), DontTrip.DoesDamage.Value.ToString(), DontTrip.DamageAmount.Value.ToString());
+            }
+
+            if (!InitComplete)
+            {
+                LocalInit();
+            }
+        }
+
+        [CustomRPC]
+        public void Init(string du, string ch, string doe, string da)
+        {
+            Duration = float.Parse(du);
+            Chance = float.Parse(ch);
+            DoesDamage = bool.Parse(doe);
+
+            if (DoesDamage)
+            {
+                DamageAmount = float.Parse(da);
+            }
+            else
+            {
+                DamageAmount = 0f;
+            }
+
+            InitComplete = true;
+        }
+
+        void LocalInit()
+        {
+            Duration = DontTrip.Duration.Value;
+            Chance = DontTrip.ChanceToTrip.Value;
+            DoesDamage = DontTrip.DoesDamage.Value;
+
+            if (DoesDamage)
+            {
+                DamageAmount = DontTrip.DamageAmount.Value;
+            }
+            else
+            {
+                DamageAmount = 0f;
+            }
+
+            InitComplete = true;
+        }
+        
 
 
         public void Update()
@@ -61,7 +127,7 @@ namespace DontTrip
         void CheckTrip()
         {
             float randomNumber = Random.Range(0, 100);
-            if (randomNumber < DontTrip.ChanceToTrip.Value)
+            if (randomNumber < Chance)
             {
                 MakeTrip();
             }
@@ -70,9 +136,8 @@ namespace DontTrip
         void MakeTrip()
         {
 
-            float Damage = DontTrip.DoesDamage.Value ? DontTrip.DamageAmount.Value : 0f;
 
-            player.CallTakeDamageAndAddForceAndFall(Damage, TripForce, DontTrip.Duration.Value);
+            player.CallTakeDamageAndAddForceAndFall(DamageAmount, TripForce, Duration);
 
         }
 

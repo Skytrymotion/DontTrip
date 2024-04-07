@@ -10,6 +10,9 @@
 - Take Damage (configurable on/off & damage amount)
 - Chance of Tripping (configurable)
 
+[Version 1.2.0+]
+- Settings Sync with Host
+
 ## Notes
 - Client Sided, not everyone needs to install it
 
