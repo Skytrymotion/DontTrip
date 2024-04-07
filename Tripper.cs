@@ -4,6 +4,7 @@ using HarmonyLib;
 using Photon.Pun;
 using UnityEngine;
 using MyceliumNetworking;
+using Steamworks;
 
 namespace DontTrip
 {
@@ -42,9 +43,17 @@ namespace DontTrip
             if (PhotonNetwork.IsMasterClient)
             {
                 MyceliumNetwork.RPC(modId, nameof(Init), ReliableType.Reliable, DontTrip.Duration.Value.ToString(), DontTrip.ChanceToTrip.Value.ToString(), DontTrip.DoesDamage.Value.ToString(), DontTrip.DamageAmount.Value.ToString());
+                MyceliumNetwork.PlayerEntered += CallPlayerEntered;
             }
 
         }
+
+        void CallPlayerEntered(CSteamID steamID)
+        {
+            MyceliumNetwork.RPCTarget(modId, nameof(Init), steamID, ReliableType.Reliable, DontTrip.Duration.Value.ToString(), DontTrip.ChanceToTrip.Value.ToString(), DontTrip.DoesDamage.Value.ToString(), DontTrip.DamageAmount.Value.ToString());
+        }
+
+
 
         [CustomRPC]
         public void Init(string du, string ch, string doe, string da)

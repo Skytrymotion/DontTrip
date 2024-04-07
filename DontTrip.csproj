@@ -33,8 +33,14 @@
     <Reference Include="Assembly-CSharp" Publicize="true">
       <HintPath>lib\Assembly-CSharp.dll</HintPath>
     </Reference>
+    <Reference Include="com.rlabrecque.steamworks.net">
+      <HintPath>lib\com.rlabrecque.steamworks.net.dll</HintPath>
+    </Reference>
     <Reference Include="MyceliumNetworkingForCW">
       <HintPath>lib\MyceliumNetworkingForCW.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonRealtime">
+      <HintPath>lib\PhotonRealtime.dll</HintPath>
     </Reference>
     <Reference Include="PhotonUnityNetworking">
       <HintPath>lib\PhotonUnityNetworking.dll</HintPath>
