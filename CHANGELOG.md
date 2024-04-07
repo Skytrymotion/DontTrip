@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0] - 07/04/2024
+
+### Added
+- Syncs with Hosts Settings
+
 ## [1.1.0] - 07/04/2024
 
 ### Changed

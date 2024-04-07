@@ -19,6 +19,7 @@ namespace DontTrip
         float Chance;
         bool DoesDamage;
         float DamageAmount;
+        bool InitComplete = false;
 
         const uint modId = 817816524;
 
@@ -39,18 +40,52 @@ namespace DontTrip
             }
             if (PhotonNetwork.IsMasterClient)
             {
-                MyceliumNetwork.RPC(modId, nameof(Init), ReliableType.Reliable, DontTrip.Duration.Value, DontTrip.ChanceToTrip.Value, DontTrip.DoesDamage.Value, DontTrip.DamageAmount.Value);
+                MyceliumNetwork.RPC(modId, nameof(Init), ReliableType.Reliable, DontTrip.Duration.Value.ToString(), DontTrip.ChanceToTrip.Value.ToString(), DontTrip.DoesDamage.Value.ToString(), DontTrip.DamageAmount.Value.ToString());
+            }
+
+            if (!InitComplete)
+            {
+                LocalInit();
             }
         }
 
         [CustomRPC]
-        public void Init(float du, float ch, bool doe, float da)
+        public void Init(string du, string ch, string doe, string da)
         {
-            Duration = du;
-            Chance = ch;
-            DoesDamage = doe;
-            DamageAmount = da;
+            Duration = float.Parse(du);
+            Chance = float.Parse(ch);
+            DoesDamage = bool.Parse(doe);
+
+            if (DoesDamage)
+            {
+                DamageAmount = float.Parse(da);
+            }
+            else
+            {
+                DamageAmount = 0f;
+            }
+
+            InitComplete = true;
         }
+
+        void LocalInit()
+        {
+            Duration = DontTrip.Duration.Value;
+            Chance = DontTrip.ChanceToTrip.Value;
+            DoesDamage = DontTrip.DoesDamage.Value;
+
+            if (DoesDamage)
+            {
+                DamageAmount = DontTrip.DamageAmount.Value;
+            }
+            else
+            {
+                DamageAmount = 0f;
+            }
+
+            InitComplete = true;
+        }
+        
 
 
         public void Update()
@@ -92,7 +127,7 @@ namespace DontTrip
         void CheckTrip()
         {
             float randomNumber = Random.Range(0, 100);
-            if (randomNumber < DontTrip.ChanceToTrip.Value)
+            if (randomNumber < Chance)
             {
                 MakeTrip();
             }
@@ -101,9 +136,8 @@ namespace DontTrip
         void MakeTrip()
         {
 
-            float Damage = DontTrip.DoesDamage.Value ? DontTrip.DamageAmount.Value : 0f;
 
-            player.CallTakeDamageAndAddForceAndFall(Damage, TripForce, DontTrip.Duration.Value);
+            player.CallTakeDamageAndAddForceAndFall(DamageAmount, TripForce, Duration);
 
         }
 

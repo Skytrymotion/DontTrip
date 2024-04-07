@@ -1,0 +1,10 @@
+{
+  "name": "Dont_Trip",
+  "version_number": "1.1.0",
+  "website_url": "https://github.com/Skytrymotion/DontTrip",
+  "description": "Makes you Randomly Trip if you Sprint",
+  "dependencies": [
+    "BepInEx-BepInExPack-5.4.2100",
+    "RugbugRedfern-MyceliumNetworking-1.0.1"
+  ]
+}

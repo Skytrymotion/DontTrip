@@ -12,7 +12,7 @@
     
     <AssemblyName>DontTrip</AssemblyName>
     <Description>Makes you Randomly Trip if you Sprint</Description>
-    <Version>1.1.0</Version>
+    <Version>1.2.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
