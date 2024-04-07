@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using UnityEngine;
+using static UnityEngine.ParticleSystem.PlaybackState;
 
 namespace DontTrip
 {
@@ -11,7 +12,14 @@ namespace DontTrip
 
         float maxTimerTime = 5f;
         float TimerTime = 0f;
+        Vector3 TripForce;
         
+
+
+        void Awake()
+        {
+            TripForce = Vector3.forward;
+        }
 
 
         public void Update()
@@ -61,35 +69,13 @@ namespace DontTrip
          
         void MakeTrip()
         {
-            player.data.fallTime = DontTrip.Duration.Value;
-            if (DontTrip.DoesDamage.Value)
-            {
-                TakeDamage();
-            }
+
+            float Damage = DontTrip.DoesDamage.Value ? DontTrip.DamageAmount.Value : 0f;
+
+            player.CallTakeDamageAndAddForceAndFall(Damage, TripForce, DontTrip.Duration.Value);
+
         }
 
-        void TakeDamage()
-        {
-            if (player.ai)
-            {
-                return;
-            }
-            if (player.data.dead)
-            {
-                return;
-            }
-            if (!player.refs.view.IsMine)
-            {
-                return;
-            }
-            player.data.health -= DontTrip.DamageAmount.Value;
-            TakeDamagePost.instance.TakeDamageFeedback();
-            UI_Feedback.instance.TakeDamage(false);
 
-            if (player.data.health <= 0f)
-            {
-                player.Die();
-            }
-        }
     }
 }
