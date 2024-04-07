@@ -3,6 +3,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1] - 07/04/2024
+
+### Fixed
+- Settings Sync fixed (i hope)
+
 ## [1.2.0] - 07/04/2024
 
 ### Added
