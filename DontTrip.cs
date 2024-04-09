@@ -37,10 +37,10 @@ namespace DontTrip
             DropItem = ((BaseUnityPlugin)this).Config.Bind<bool>("DontTrip", "Drop Item", true, "If True you drop Item on Tripping");
 
 
+
             harmony.PatchAll();
 
         }
-
 
     }
 

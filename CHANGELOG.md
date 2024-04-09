@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 
 ## [1.3.0] - 07/04/2024
 
-### Fixed
+### Added
 - Now Items Drop if you Trip
 
 ## [1.2.1] - 07/04/2024
