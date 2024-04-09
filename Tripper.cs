@@ -18,8 +18,9 @@ namespace DontTrip
 
         float Duration;
         float Chance;
-        bool DoesDamage;
         float DamageAmount;
+        bool DoesDamage;
+        bool DropItem;
 
         const uint modId = 817816524;
 
@@ -27,7 +28,13 @@ namespace DontTrip
         void Awake()
         {
             TripForce = Vector3.forward;
-            
+            MyceliumNetwork.RegisterLobbyDataKey("K_Duration");
+            MyceliumNetwork.RegisterLobbyDataKey("K_Chance");
+            MyceliumNetwork.RegisterLobbyDataKey("K_DamageAmount");
+            MyceliumNetwork.RegisterLobbyDataKey("K_DoesDamage");
+            MyceliumNetwork.RegisterLobbyDataKey("K_DropItem");
+
+
         }
 
         void Start()
@@ -40,111 +47,99 @@ namespace DontTrip
             {
                 return;
             }
-            if (PhotonNetwork.IsMasterClient)
+            if (MyceliumNetwork.IsHost)
             {
-                MyceliumNetwork.RPC(modId, nameof(Init), ReliableType.Reliable, DontTrip.Duration.Value.ToString(), DontTrip.ChanceToTrip.Value.ToString(), DontTrip.DoesDamage.Value.ToString(), DontTrip.DamageAmount.Value.ToString());
-                MyceliumNetwork.PlayerEntered += CallPlayerEntered;
-            }
+                MyceliumNetwork.SetLobbyData("K_Duration", DontTrip.Duration.Value);
+                MyceliumNetwork.SetLobbyData("K_Chance", DontTrip.ChanceToTrip.Value);
+                MyceliumNetwork.SetLobbyData("K_DamageAmount", DontTrip.DamageAmount.Value);
+                MyceliumNetwork.SetLobbyData("K_DoesDamage", DontTrip.DoesDamage.Value);
+                MyceliumNetwork.SetLobbyData("K_DropItem", DontTrip.DropItem.Value);
 
-        }
-
-        void CallPlayerEntered(CSteamID steamID)
-        {
-            MyceliumNetwork.RPCTarget(modId, nameof(Init), steamID, ReliableType.Reliable, DontTrip.Duration.Value.ToString(), DontTrip.ChanceToTrip.Value.ToString(), DontTrip.DoesDamage.Value.ToString(), DontTrip.DamageAmount.Value.ToString());
-        }
-
-
-
-        [CustomRPC]
-        public void Init(string du, string ch, string doe, string da)
-        {
-            Duration = float.Parse(du);
-            Chance = float.Parse(ch);
-            DoesDamage = bool.Parse(doe);
-
-            if (DoesDamage)
-            {
-                DamageAmount = float.Parse(da);
             }
             else
             {
-                DamageAmount = 0f;
+                Duration = MyceliumNetwork.GetLobbyData<float>("K_Duration");
+                Chance = MyceliumNetwork.GetLobbyData<float>("K_Chance");
+                DamageAmount = MyceliumNetwork.GetLobbyData<float>("K_DamageAmount");
+                DoesDamage = MyceliumNetwork.GetLobbyData<bool>("K_DoesDamage");
+                DropItem = MyceliumNetwork.GetLobbyData<bool>("K_DropItem");
             }
 
         }
 
-        void LocalInit()
-        {
-            Duration = DontTrip.Duration.Value;
-            Chance = DontTrip.ChanceToTrip.Value;
-            DoesDamage = DontTrip.DoesDamage.Value;
+   void LocalInit()
+   {
+       Duration = DontTrip.Duration.Value;
+       Chance = DontTrip.ChanceToTrip.Value;
+       DoesDamage = DontTrip.DoesDamage.Value;
+       DropItem = DontTrip.DropItem.Value;
 
-            if (DoesDamage)
-            {
-                DamageAmount = DontTrip.DamageAmount.Value;
-            }
-            else
-            {
-                DamageAmount = 0f;
-            }
+       if (DoesDamage)
+       {
+           DamageAmount = DontTrip.DamageAmount.Value;
+       }
+       else
+       {
+           DamageAmount = 0f;
+       }
 
-        }
-        
-
-
-        public void Update()
-        {
-            if (player.data.dead)
-            {
-                return;
-            }
-            Timer();
-            
+   }
 
 
 
+   public void Update()
+   {
 
-        }
-
-
-        void Timer()
-        {
-            if (TimerTime >= maxTimerTime) 
-            {
-                if (player.data.isSprinting && player.data.fallTime <= 0f)
-                {
-                    CheckTrip();
-                }
-                ResetTimer();
-            }
-            else
-            {
-                TimerTime += Time.deltaTime;
-            }
-        }
-
-        void ResetTimer()
-        {
-            TimerTime = 0f;
-        }
-
-        void CheckTrip()
-        {
-            float randomNumber = Random.Range(0, 100);
-            if (randomNumber < Chance)
-            {
-                MakeTrip();
-            }
-        }
-         
-        void MakeTrip()
-        {
+       if (player.data.dead)
+       {
+           return;
+       }
+       Timer();
 
 
-            player.CallTakeDamageAndAddForceAndFall(DamageAmount, TripForce, Duration);
-
-        }
 
 
-    }
+
+   }
+
+
+   void Timer()
+   {
+       if (TimerTime >= maxTimerTime) 
+       {
+           if (player.data.isSprinting && player.data.fallTime <= 0f)
+           {
+               CheckTrip();
+           }
+           ResetTimer();
+       }
+       else
+       {
+           TimerTime += Time.deltaTime;
+       }
+   }
+
+   void ResetTimer()
+   {
+       TimerTime = 0f;
+   }
+
+   void CheckTrip()
+   {
+       float randomNumber = Random.Range(0, 100);
+       if (randomNumber < Chance)
+       {
+           MakeTrip();
+       }
+   }
+
+   void MakeTrip()
+   {
+       player.CallTakeDamageAndAddForceAndFall(DamageAmount, TripForce, Duration);
+
+       if (DropItem) player.refs.items.DropItem(player.data.selectedItemSlot);
+   }
+
+
+}
 }

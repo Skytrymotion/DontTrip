@@ -12,6 +12,9 @@
 
 [Version 1.2.0+]
 - Settings Sync with Host
+ 
+[Version 1.3.0+]
+- Drop Items on Tripping (configurable on/off)
 
 ## Notes
 - Client Sided, not everyone needs to install it
